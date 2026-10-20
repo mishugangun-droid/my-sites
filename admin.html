@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIGHT VISUAL - Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#070A13;color:#fff;padding:20px}
+.container{max-width:1100px;margin:0 auto}
+h1{font-size:28px;margin-bottom:5px} h1 span{color:#8A5CFF}
+.card{background:#111528;border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:24px;margin-top:20px}
+.controls{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+.controls div{display:flex;flex-direction:column;gap:6px}
+label{font-size:12px;opacity:0.6}
+select,input{background:#070A13;border:1px solid rgba(255,255,255,0.1);color:#fff;padding:12px;border-radius:10px;outline:none}
+.btn{padding:12px 20px;border-radius:10px;font-weight:700;cursor:pointer;border:none}
+.btn-primary{background:#8A5CFF;color:#fff}
+.btn-funpay{background:#ffde00;color:#000}
+.btn-ghost{background:rgba(255,255,255,0.07);color:#fff;border:1px solid rgba(255,255,255,0.1)}
+table{width:100%;border-collapse:collapse;margin-top:20px;font-size:13px}
+th{opacity:0.5;text-align:left;padding:10px;border-bottom:1px solid rgba(255,255,255,0.08)}
+td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.key{font-family:monospace;letter-spacing:1px;color:#4FC3FF}
+.badge{padding:3px 8px;border-radius:100px;font-size:11px;background:rgba(138,92,255,0.2);border:1px solid rgba(138,92,255,0.3)}
+.expired{color:#ff5a5a} .active{color:#4ade80}
+.tw{overflow-x:auto}table{min-width:560px}</style>
+
+</head>
+<body>
+<div class="container">
+  <h1>NIGHT <span>VISUAL</span> ADMIN</h1>
+  <p style="opacity:0.5">Генератор ключей для FunPay • Авто-выдача</p>
+  <div class="card" id="login" style="display:none;max-width:520px">
+    <label>GitHub token (вход в админку)</label>
+    <input id="tk" type="password" placeholder="github_pat_..." style="width:100%;margin:8px 0 12px">
+    <button class="btn btn-primary" onclick="saveToken()">Войти</button>
+    <div id="msg" class="expired" style="margin-top:12px;font-size:13px"></div>
+  </div>
+  <div class="card" id="panel" style="display:none">
+    <div class="controls">
+      <div><label>Тариф</label><select id="tariff">
+        <option value="2">2 дня - TRIAL</option>
+        <option value="30">30 дней - 299₽</option>
+        <option value="60" selected>60 дней - 499₽</option>
+        <option value="120">120 дней - 849₽</option>
+        <option value="9999">НАВСЕГДА - 1499₽</option>
+      </select></div>
+      <div><label>Количество</label><input id="count" type="number" value="10" min="1" max="100" style="width:100px"></div>
+      <button class="btn btn-primary" onclick="generateBulk()">Сгенерировать</button>
+      <button class="btn btn-funpay" onclick="exportTxt()">Скачать .txt (последняя партия)</button>
+      <button class="btn btn-ghost" onclick="clearAll()" style="color:#ff5a5a">Очистить всё</button>
+      <button class="btn btn-ghost" onclick="logout()" style="margin-left:auto">Выйти</button>
+    </div>
+    <div id="note" style="margin-top:12px;font-size:12px;opacity:0.6"></div>
+    <div style="margin-top:6px;font-size:12px;opacity:0.4">Срок ключа считается с момента создания. Новые ключи появляются на сайте через 1-2 минуты. Список ниже хранится в этом браузере, поэтому сразу скачивай .txt.</div>
+    <div class="tw"><table>
+      <thead><tr><th>#</th><th>Ключ</th><th>Тариф</th><th>Истекает</th><th>Статус</th><th></th></tr></thead>
+      <tbody id="tableBody"></tbody>
+    </table></div>
+  </div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const OWNER=location.hostname.split('.')[0], REPO=location.pathname.split('/')[1]||'';
+const REPO_API=`https://api.github.com/repos/${OWNER}/${REPO}`, FILE_API=REPO_API+'/contents/keys.json';
+let token=localStorage.getItem('nv_token')||'';
+let list=JSON.parse(localStorage.getItem('nv_keys')||'[]');
+let last=JSON.parse(localStorage.getItem('nv_last')||'[]');
+const H=()=>({Authorization:'Bearer '+token,Accept:'application/vnd.github+json'});
+const save=()=>{localStorage.setItem('nv_keys',JSON.stringify(list));localStorage.setItem('nv_last',JSON.stringify(last));};
+async function hash(s){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('nv:'+s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+async function readRemote(){
+  const r=await fetch(FILE_API+'?t='+Date.now(),{headers:H()});
+  if(r.status===404) return {data:{},sha:null};
+  if(!r.ok) throw new Error('GitHub '+r.status);
+  const j=await r.json(); return {data:JSON.parse(atob(j.content.replace(/\n/g,''))),sha:j.sha};
+}
+async function writeRemote(data,sha){
+  const body={message:'update keys',content:btoa(JSON.stringify(data))}; if(sha) body.sha=sha;
+  const r=await fetch(FILE_API,{method:'PUT',headers:H(),body:JSON.stringify(body)});
+  if(!r.ok) throw new Error('GitHub '+r.status);
+}
+function show(ok){ $('login').style.display=ok?'none':'block'; $('panel').style.display=ok?'block':'none'; if(ok) render(); }
+async function saveToken(){
+  token=$('tk').value.trim(); $('msg').textContent='Проверяю...';
+  const r=await fetch(REPO_API,{headers:H()}).catch(()=>null);
+  if(!r||!r.ok){ $('msg').textContent='Токен не подошёл (нужен доступ Contents: Read and write к репозиторию '+REPO+')'; return; }
+  localStorage.setItem('nv_token',token); $('msg').textContent=''; show(true);
+}
+function logout(){ localStorage.removeItem('nv_token'); token=''; show(false); }
+function genKey(){
+  const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', b=new Uint32Array(8); crypto.getRandomValues(b);
+  const c=[...b].map(x=>A[x%A.length]).join('');
+  return 'NIGHT-'+c.slice(0,4)+'-'+c.slice(4);
+}
+async function generateBulk(){
+  const days=parseInt($('tariff').value), n=Math.min(100,Math.max(1,parseInt($('count').value)||1));
+  $('note').textContent='Сохраняю...';
+  try{
+    const {data,sha}=await readRemote(), exp=days===9999?0:Date.now()+days*864e5, batch=[];
+    for(let i=0;i<n;i++){ const key=genKey(); data[await hash(key)]=exp; batch.push({key,days,expires:exp}); }
+    await writeRemote(data,sha);
+    list=batch.concat(list); last=batch.map(x=>x.key); save(); render();
+    $('note').textContent='Готово: '+n+' ключей. На сайте заработают через 1-2 минуты. Скачай .txt.';
+  }catch(e){ $('note').textContent=''; alert('Ошибка: '+e.message); }
+}
+function info(k){
+  if(k.expires===0) return {date:'НАВСЕГДА',txt:'Активен',cls:'active'};
+  const ex=k.expires<Date.now();
+  return {date:new Date(k.expires).toLocaleDateString(),txt:ex?'Истёк':'Активен',cls:ex?'expired':'active'};
+}
+function render(){
+  $('tableBody').innerHTML=list.map((k,i)=>{ const f=info(k);
+    return `<tr><td>${i+1}</td><td class="key">${k.key}</td>
+    <td><span class="badge">${k.days===9999?'FOREVER':k.days+' ДН'}</span></td>
+    <td>${f.date}</td><td class="${f.cls}">${f.txt}</td>
+    <td style="white-space:nowrap"><button class="btn btn-ghost" style="padding:4px 8px;font-size:12px" onclick="copyKey('${k.key}')">Копировать</button>
+    <button class="btn btn-ghost" style="padding:4px 8px;font-size:12px;color:#ff5a5a" onclick="delKey('${k.key}')">✕</button></td></tr>`;
+  }).join('');
+}
+function copyKey(k){ navigator.clipboard.writeText(k); alert('Скопировано: '+k); }
+async function delKey(k){
+  if(!confirm('Удалить '+k+'?')) return;
+  try{ const {data,sha}=await readRemote(); delete data[await hash(k)]; await writeRemote(data,sha);
+    list=list.filter(x=>x.key!==k); save(); render(); }catch(e){ alert('Ошибка: '+e.message); }
+}
+function exportTxt(){
+  if(!last.length) return alert('Сначала сгенерируй ключи');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([last.join('\n')],{type:'text/plain'}));
+  a.download='night_visual_keys_'+new Date().toISOString().slice(0,10)+'.txt'; a.click();
+}
+async function clearAll(){
+  if(!confirm('Удалить ВСЕ ключи? Они перестанут работать на сайте.')) return;
+  try{ const {sha}=await readRemote(); await writeRemote({},sha); list=[]; last=[]; save(); render(); }
+  catch(e){ alert('Ошибка: '+e.message); }
+}
+show(!!token);
+</script>
+</body>
+</html>
