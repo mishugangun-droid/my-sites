@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NIGHT VISUAL - Admin</title>
+<title>EXTERNAL - Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
@@ -30,7 +30,7 @@ td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.05)}
 </head>
 <body>
 <div class="container">
-  <h1>NIGHT <span>VISUAL</span> ADMIN</h1>
+  <h1>EXTER<span>NAL</span> ADMIN</h1>
   <p style="opacity:0.5">Генератор ключей для FunPay • Авто-выдача</p>
   <div class="card" id="login" style="display:none;max-width:520px">
     <label>GitHub token (вход в админку)</label>
@@ -96,7 +96,7 @@ function logout(){ localStorage.removeItem('nv_token'); token=''; show(false); }
 function genKey(){
   const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', b=new Uint32Array(8); crypto.getRandomValues(b);
   const c=[...b].map(x=>A[x%A.length]).join('');
-  return 'NIGHT-'+c.slice(0,4)+'-'+c.slice(4);
+  return 'EXT-'+c.slice(0,4)+'-'+c.slice(4);
 }
 async function generateBulk(){
   const days=parseInt($('tariff').value), n=Math.min(100,Math.max(1,parseInt($('count').value)||1));
@@ -133,7 +133,7 @@ function exportTxt(){
   if(!last.length) return alert('Сначала сгенерируй ключи');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([last.join('\n')],{type:'text/plain'}));
-  a.download='night_visual_keys_'+new Date().toISOString().slice(0,10)+'.txt'; a.click();
+  a.download='external_keys_'+new Date().toISOString().slice(0,10)+'.txt'; a.click();
 }
 async function clearAll(){
   if(!confirm('Удалить ВСЕ ключи? Они перестанут работать на сайте.')) return;

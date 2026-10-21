@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NIGHT VISUAL - Визуалы для Minecraft</title>
+<title>EXTERNAL - Визуалы для Minecraft</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Manrope:wght@700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
@@ -61,7 +61,7 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
 <header>
  <div class="container">
   <nav>
-   <div class="logo">NIGHT <span>VISUAL</span></div>
+   <div class="logo">EXTER<span>NAL</span></div>
    <div class="nav-links"><a href="#pricing">Тарифы</a><a href="#checker">Активация</a><a href="#">Discord</a></div>
    <a href="#pricing" class="btn btn-primary" style="padding:8px 18px">Купить</a>
   </nav>
@@ -72,7 +72,7 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
  <div class="container">
   <div class="badge">✦ MINECRAFT 1.16.5 - 1.21.X</div>
   <h1>ВИЗУАЛЫ ОТ КОТОРЫХ<br><span>НЕ ЛАГАЕТ ПК</span></h1>
-  <p>NIGHT VISUAL — приватные шейдеры и визуалы с мягкими тенями, чистым небом и FPS Boost. Смотри ночь по-новому.</p>
+  <p>EXTERNAL — приватные шейдеры и визуалы с мягкими тенями, чистым небом и FPS Boost. Смотри ночь по-новому.</p>
   <div class="hero-btns">
    <a href="#pricing" class="btn btn-primary">Выбрать тариф →</a>
    <a href="#checker" class="btn btn-ghost">Активировать ключ</a>
@@ -128,9 +128,9 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
 
  <div class="checker" id="checker">
   <h3>Активация ключа</h3>
-  <p>Введи ключ формата NIGHT-XXXX-XXXX чтобы проверить срок действия</p>
+  <p>Введи ключ формата EXT-XXXX-XXXX чтобы проверить срок действия</p>
   <div class="key-input">
-   <input id="keyInput" placeholder="NIGHT-XXXX-XXXX">
+   <input id="keyInput" placeholder="EXT-XXXX-XXXX">
    <button class="btn btn-primary" onclick="checkKey()">Активировать</button>
   </div>
   <div id="checkerResult"></div>
@@ -138,7 +138,7 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
  </div>
 </div>
 
-<footer>© 2025 NIGHT VISUAL. Не аффилирован с Mojang AB. <br> Связь: @nightvisual_bot в Telegram</footer>
+<footer>© 2026 EXTERNAL. Не аффилирован с Mojang AB. <br> Связь: @nightvisual_bot в Telegram</footer>
 
 <script>
 const BUY_URL = "https://t.me/nightvisual_bot"; // ссылка на оплату / Telegram
@@ -151,7 +151,7 @@ function buyKey(){ window.open(BUY_URL, '_blank'); }
 async function checkKey(){
   const key = document.getElementById('keyInput').value.trim().toUpperCase();
   const res = document.getElementById('checkerResult');
-  if(!/^NIGHT-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(key)){ res.innerHTML='<span class=error>Неверный формат ключа</span>'; return; }
+  if(!/^(EXT|NIGHT)-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(key)){ res.innerHTML='<span class=error>Неверный формат ключа</span>'; return; }
   let data = {};
   try{ const r = await fetch('keys.json?'+Date.now()); if(r.ok) data = await r.json(); }
   catch(e){ res.innerHTML='<span class=error>Ошибка связи, попробуй ещё раз</span>'; return; }
