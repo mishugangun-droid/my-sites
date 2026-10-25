@@ -51,6 +51,13 @@ nav{display:flex;justify-content:space-between;align-items:center;height:70px}
 .key-input input:focus{border-color:#8A5CFF}
 #checkerResult{margin-top:15px;font-weight:600;min-height:20px}
 .success{color:#4ade80}
+.cabinet{text-align:left;margin-top:-40px}
+.cabinet h3{text-align:center}
+.cab-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);font-size:15px}
+.cab-row span{opacity:0.55}
+.cab-btns{display:flex;gap:10px;margin:22px 0 6px;flex-wrap:wrap}
+.cab-btns .btn{flex:1}
+.steps{margin:18px 0 0;padding-left:20px;opacity:0.65;font-size:14px;line-height:1.8}
 .error{color:#ff5a5a}
 footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px solid rgba(255,255,255,0.06);margin-top:80px}
 @media(max-width:1000px){.pricing{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:1fr}.hero h1{font-size:42px}.price-card.popular{transform:scale(1)}}
@@ -62,7 +69,7 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
  <div class="container">
   <nav>
    <div class="logo">EXTER<span>NAL</span></div>
-   <div class="nav-links"><a href="#pricing">Тарифы</a><a href="#checker">Активация</a><a href="#">Discord</a></div>
+   <div class="nav-links"><a href="#pricing">Тарифы</a><a href="#checker">Активация</a><a href="#cabinet">Кабинет</a><a href="#">Discord</a></div>
    <a href="#pricing" class="btn btn-primary" style="padding:8px 18px">Купить</a>
   </nav>
  </div>
@@ -134,7 +141,23 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
    <button class="btn btn-primary" onclick="checkKey()">Активировать</button>
   </div>
   <div id="checkerResult"></div>
-  
+ </div>
+
+ <div class="checker cabinet" id="cabinet" style="display:none">
+  <h3>Личный кабинет</h3>
+  <div class="cab-row"><span>Ключ</span><b id="cabKey"></b></div>
+  <div class="cab-row"><span>Статус</span><b id="cabStatus" class="success"></b></div>
+  <div class="cab-row"><span>Осталось</span><b id="cabLeft"></b></div>
+  <div class="cab-btns">
+   <a class="btn btn-primary" id="dlBtn" href="#" download>Скачать мод</a>
+   <button class="btn btn-ghost" onclick="logoutKey()">Выйти</button>
+  </div>
+  <ol class="steps">
+   <li>Установи Fabric Loader для Minecraft 1.21.4</li>
+   <li>Скачай Fabric API 1.21.4 и положи в папку mods</li>
+   <li>Положи скачанный мод EXTERNAL в папку mods</li>
+   <li>В игре нажми Right Shift, чтобы открыть меню</li>
+  </ol>
  </div>
 </div>
 
@@ -148,21 +171,60 @@ async function hash(s){
 }
 function generateKey(){ window.open(BUY_URL, '_blank'); }
 function buyKey(){ window.open(BUY_URL, '_blank'); }
-async function checkKey(){
-  const key = document.getElementById('keyInput').value.trim().toUpperCase();
-  const res = document.getElementById('checkerResult');
-  if(!/^(EXT|NIGHT)-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(key)){ res.innerHTML='<span class=error>Неверный формат ключа</span>'; return; }
+const DOWNLOAD_URL = "external.jar"; // имя файла мода, загруженного в репозиторий рядом с index.html
+const $ = id => document.getElementById(id);
+
+async function verify(key){
   let data = {};
-  try{ const r = await fetch('keys.json?'+Date.now()); if(r.ok) data = await r.json(); }
-  catch(e){ res.innerHTML='<span class=error>Ошибка связи, попробуй ещё раз</span>'; return; }
+  const r = await fetch('keys.json?'+Date.now());
+  if(r.ok) data = await r.json();
   const e = data[await hash(key)];
-  if(e === undefined){ res.innerHTML='<span class=error>Ключ не найден ❌</span>'; return; }
-  if(e === 0){ res.innerHTML='<span class=success>✅ Ключ НАВСЕГДА активирован! Доступ открыт.</span>'; return; }
+  if(e === undefined) return {ok:false, msg:'Ключ не найден ❌'};
+  if(e === 0) return {ok:true, forever:true};
   const diff = e - Date.now();
-  if(diff <= 0){ res.innerHTML='<span class=error>Срок действия истёк ❌</span>'; return; }
-  const d = Math.floor(diff/864e5), h = Math.floor(diff/36e5)%24;
-  res.innerHTML='<span class=success>✅ Ключ активен! Осталось: '+d+' дн. '+h+' ч.</span>';
+  if(diff <= 0) return {ok:false, msg:'Срок действия истёк ❌'};
+  return {ok:true, diff:diff};
 }
+
+function showCabinet(key, v){
+  $('cabinet').style.display = 'block';
+  $('cabKey').textContent = key.slice(0,4) + '-••••-' + key.slice(-4);
+  $('cabStatus').textContent = 'Активен';
+  if(v.forever) $('cabLeft').textContent = 'Навсегда';
+  else $('cabLeft').textContent = Math.floor(v.diff/864e5) + ' дн. ' + (Math.floor(v.diff/36e5)%24) + ' ч.';
+  $('dlBtn').href = DOWNLOAD_URL;
+}
+
+function logoutKey(){
+  localStorage.removeItem('ext_key');
+  $('cabinet').style.display = 'none';
+  $('keyInput').value = '';
+  $('checkerResult').innerHTML = '';
+}
+
+async function checkKey(){
+  const key = $('keyInput').value.trim().toUpperCase();
+  const res = $('checkerResult');
+  if(!/^(EXT|NIGHT)-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(key)){ res.innerHTML='<span class=error>Неверный формат ключа</span>'; return; }
+  let v;
+  try{ v = await verify(key); }
+  catch(e){ res.innerHTML='<span class=error>Ошибка связи, попробуй ещё раз</span>'; return; }
+  if(!v.ok){ res.innerHTML='<span class=error>'+v.msg+'</span>'; $('cabinet').style.display='none'; return; }
+  localStorage.setItem('ext_key', key);
+  res.innerHTML = '<span class=success>✅ Ключ активирован! Ниже личный кабинет.</span>';
+  showCabinet(key, v);
+  $('cabinet').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+window.addEventListener('load', async () => {
+  const k = localStorage.getItem('ext_key');
+  if(!k) return;
+  $('keyInput').value = k;
+  try{
+    const v = await verify(k);
+    if(v.ok) showCabinet(k, v); else localStorage.removeItem('ext_key');
+  }catch(e){}
+});
 </script>
 </body>
 </html>
