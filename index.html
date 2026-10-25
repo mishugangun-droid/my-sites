@@ -141,6 +141,7 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
    <button class="btn btn-primary" onclick="checkKey()">Активировать</button>
   </div>
   <div id="checkerResult"></div>
+  
  </div>
 
  <div class="checker cabinet" id="cabinet" style="display:none">
@@ -171,7 +172,7 @@ async function hash(s){
 }
 function generateKey(){ window.open(BUY_URL, '_blank'); }
 function buyKey(){ window.open(BUY_URL, '_blank'); }
-const DOWNLOAD_URL = "external.jar"; // имя файла мода, загруженного в репозиторий рядом с index.html
+const DOWNLOAD_URL = "external-1.0.0.jar"; // имя файла мода, загруженного в репозиторий рядом с index.html
 const $ = id => document.getElementById(id);
 
 async function verify(key){
