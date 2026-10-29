@@ -32,7 +32,7 @@ nav{display:flex;justify-content:space-between;align-items:center;height:70px}
 .section-title{text-align:center;margin:80px 0 40px}
 .section-title h2{font-size:42px;font-weight:800}
 .section-title p{opacity:0.5;margin-top:10px}
-.pricing{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.pricing{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .price-card{background:#111528;border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:24px;position:relative;display:flex;flex-direction:column}
 .price-card.popular{background:linear-gradient(180deg,#1B1633,#111528);border-color:#8A5CFF;transform:scale(1.05);box-shadow:0 0 40px rgba(138,92,255,0.2)}
 .popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#8A5CFF;padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700}
@@ -69,7 +69,7 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
  <div class="container">
   <nav>
    <div class="logo">EXTER<span>NAL</span></div>
-   <div class="nav-links"><a href="#pricing">Тарифы</a><a href="#checker">Активация</a><a href="#cabinet">Кабинет</a><a href="#">Discord</a></div>
+   <div class="nav-links"><a href="#pricing">Тарифы</a><a href="#checker">Активация</a><a href="#cabinet">Кабинет</a></div>
    <a href="#pricing" class="btn btn-primary" style="padding:8px 18px">Купить</a>
   </nav>
  </div>
@@ -77,9 +77,9 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
 
 <section class="hero">
  <div class="container">
-  <div class="badge">✦ MINECRAFT 1.16.5 - 1.21.X</div>
+  <div class="badge">✦ MINECRAFT 1.21.4 • FABRIC</div>
   <h1>ВИЗУАЛЫ ОТ КОТОРЫХ<br><span>НЕ ЛАГАЕТ ПК</span></h1>
-  <p>EXTERNAL — приватные шейдеры и визуалы с мягкими тенями, чистым небом и FPS Boost. Смотри ночь по-новому.</p>
+  <p>EXTERNAL — визуальный мод со стеклянным HUD, клик-гуи, бинд-командами в чате и настройками для FPS.</p>
   <div class="hero-btns">
    <a href="#pricing" class="btn btn-primary">Выбрать тариф →</a>
    <a href="#checker" class="btn btn-ghost">Активировать ключ</a>
@@ -89,46 +89,40 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
 
 <div class="container">
  <div class="features">
-  <div class="f-card"><h3>⚡ +40% FPS</h3><p>Оптимизация под слабые ПК. Не режет фпс как SEUS и Continuum.</p></div>
-  <div class="f-card"><h3>🌙 Идеальная ночь</h3><p>Тёмные, но всё видно. Красивая луна, звезды и свечение.</p></div>
-  <div class="f-card"><h3>🛡️ Банов нет</h3><p>Это ресурс-пак/шейдер, а не чит. 100% безопасно для Hypixel, FunTime, ReallyWorld.</p></div>
+  <div class="f-card"><h3>⚡ Лёгкий и быстрый</h3><p>Свои настройки для FPS внутри меню: облака, частицы, дальность прорисовки.</p></div>
+  <div class="f-card"><h3>🪟 Стеклянный HUD</h3><p>Прозрачные панели в стиле iOS: FPS, пинг, эффекты, броня, Target HUD.</p></div>
+  <div class="f-card"><h3>🎛️ Своё управление</h3><p>Клик-гуи по Right Shift и бинды командами в чате, например .bind fullbright r</p></div>
  </div>
 
  <div class="section-title" id="pricing">
   <h2>Выбери свой тариф</h2>
-  <p>Одна покупка — один ключ. Привязка к HWID после активации</p>
+  <p>Одна покупка — один ключ. Ключ придёт в чате FunPay после оплаты</p>
  </div>
 
  <div class="pricing">
   <div class="price-card">
-   <h3>TRIAL</h3>
-   <div class="price free">0₽ <small>/ 2 дня</small></div>
-   <ul><li>Весь функционал</li><li>Без привязки</li><li>Поддержка 24/7</li></ul>
-   <button class="btn btn-ghost" onclick="generateKey(2)">Получить бесплатно</button>
-  </div>
-  <div class="price-card">
    <h3>30 ДНЕЙ</h3>
    <div class="price">299₽ <small>/ мес</small></div>
-   <ul><li>Все обновления</li><li>1 слот HWID</li><li>Личный кабинет</li></ul>
+   <ul><li>Все обновления</li><li>Личный кабинет</li><li>Поддержка в чате</li></ul>
    <button class="btn btn-ghost" onclick="buyKey(30)">Купить</button>
   </div>
   <div class="price-card popular">
    <div class="popular-badge">🔥 ХИТ</div>
    <h3>60 ДНЕЙ</h3>
    <div class="price">499₽ <small>/ 2 мес</small></div>
-   <ul><li>Выгода 17%</li><li>Сброс HWID x1</li><li>Приоритет поддержка</li></ul>
+   <ul><li>Выгода 17%</li><li>Все обновления</li><li>Личный кабинет</li></ul>
    <button class="btn btn-primary" onclick="buyKey(60)">Купить</button>
   </div>
   <div class="price-card">
    <h3>120 ДНЕЙ</h3>
    <div class="price">849₽ <small>/ 4 мес</small></div>
-   <ul><li>Выгода 29%</li><li>Сброс HWID x3</li><li>Бета-доступ</li></ul>
+   <ul><li>Выгода 29%</li><li>Все обновления</li><li>Личный кабинет</li></ul>
    <button class="btn btn-ghost" onclick="buyKey(120)">Купить</button>
   </div>
   <div class="price-card" style="border-color:#FFD60A">
    <h3 style="color:#FFD60A">НАВСЕГДА</h3>
    <div class="price">1499₽ <small>/ once</small></div>
-   <ul><li>Навсегда</li><li>Все будущие версии</li><li>VIP Роль в DS</li></ul>
+   <ul><li>Навсегда</li><li>Все будущие версии</li><li>Личный кабинет</li></ul>
    <button class="btn btn-primary" style="background:#FFD60A;color:#000" onclick="buyKey(9999)">Купить навсегда</button>
   </div>
  </div>
@@ -162,16 +156,15 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
  </div>
 </div>
 
-<footer>© 2026 EXTERNAL. Не аффилирован с Mojang AB. <br> Связь: @nightvisual_bot в Telegram</footer>
+<footer>© 2026 EXTERNAL. Не аффилирован с Mojang AB. <br> Поддержка: через чат FunPay после покупки</footer>
 
 <script>
-const BUY_URL = "https://t.me/nightvisual_bot"; // ссылка на оплату / Telegram
 async function hash(s){
   const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('nv:'+s));
   return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
 }
-function generateKey(){ window.open(BUY_URL, '_blank'); }
-function buyKey(){ window.open(BUY_URL, '_blank'); }
+const LOTS = { 30: "https://funpay.com/lots/offer?id=80564033", 60: "https://funpay.com/lots/offer?id=80564048", 120: "https://funpay.com/lots/offer?id=80564065", 9999: "https://funpay.com/lots/offer?id=80564097" };
+function buyKey(days){ const u = LOTS[days]; if(u) window.open(u, '_blank'); }
 const DOWNLOAD_URL = "https://github.com/mishugangun-droid/EXTERNAL/raw/main/external-1.0.0.jar"; // имя файла мода, загруженного в репозиторий рядом с index.html
 const $ = id => document.getElementById(id);
 
