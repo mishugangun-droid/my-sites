@@ -145,12 +145,13 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
   <div class="cab-row"><span>Осталось</span><b id="cabLeft"></b></div>
   <div class="cab-btns">
    <a class="btn btn-primary" id="dlBtn" href="#" download>Скачать мод</a>
+   <a class="btn btn-ghost" id="dlLauncher" href="#" download>Лаунчер для ПК</a>
    <button class="btn btn-ghost" onclick="logoutKey()">Выйти</button>
   </div>
   <ol class="steps">
    <li>Установи Fabric Loader для Minecraft 1.21.4</li>
    <li>Скачай Fabric API 1.21.4 и положи в папку mods</li>
-   <li>Положи скачанный мод EXTERNAL в папку mods</li>
+   <li>Положи скачанный мод EXTERNAL в папку mods (или поставь его лаунчером для ПК)</li>
    <li>В игре нажми Right Shift, чтобы открыть меню</li>
   </ol>
  </div>
@@ -166,6 +167,7 @@ async function hash(s){
 const LOTS = { 30: "https://funpay.com/lots/offer?id=80564033", 60: "https://funpay.com/lots/offer?id=80564048", 120: "https://funpay.com/lots/offer?id=80564065", 9999: "https://funpay.com/lots/offer?id=80564097" };
 function buyKey(days){ const u = LOTS[days]; if(u) window.open(u, '_blank'); }
 const DOWNLOAD_URL = "https://github.com/mishugangun-droid/EXTERNAL/raw/main/external-1.0.0.jar"; // имя файла мода, загруженного в репозиторий рядом с index.html
+const LAUNCHER_URL = "https://github.com/mishugangun-droid/EXTERNAL/raw/main/ExternalLauncher.exe";
 const $ = id => document.getElementById(id);
 
 async function verify(key){
@@ -182,11 +184,12 @@ async function verify(key){
 
 function showCabinet(key, v){
   $('cabinet').style.display = 'block';
-  $('cabKey').textContent = key.slice(0,4) + '-••••-' + key.slice(-4);
+  $('cabKey').textContent = key.slice(0,3) + '-••••-' + key.slice(-4);
   $('cabStatus').textContent = 'Активен';
   if(v.forever) $('cabLeft').textContent = 'Навсегда';
   else $('cabLeft').textContent = Math.floor(v.diff/864e5) + ' дн. ' + (Math.floor(v.diff/36e5)%24) + ' ч.';
   $('dlBtn').href = DOWNLOAD_URL;
+  $('dlLauncher').href = LAUNCHER_URL;
 }
 
 function logoutKey(){
