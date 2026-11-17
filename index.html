@@ -62,9 +62,32 @@ nav{display:flex;justify-content:space-between;align-items:center;height:70px}
 footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px solid rgba(255,255,255,0.06);margin-top:80px}
 @media(max-width:1000px){.pricing{grid-template-columns:repeat(2,1fr)}.features{grid-template-columns:1fr}.hero h1{font-size:42px}.price-card.popular{transform:scale(1)}}
 @media(max-width:600px){.pricing{grid-template-columns:1fr}.hero-btns{flex-direction:column}.nav-links{display:none}}
+
+/* ===== новогодняя тема ===== */
+:root{--red:#E5484D;--green:#2FBF71;--gold:#FFC857}
+.btn-primary{background:linear-gradient(135deg,#E5484D,#B3262B)!important;box-shadow:0 0 22px rgba(229,72,77,.45)!important}
+.btn-primary:hover{box-shadow:0 0 34px rgba(229,72,77,.65)!important}
+.logo span{color:var(--red)!important}
+.hero h1 span{background:linear-gradient(135deg,#E5484D,#FFC857,#2FBF71)!important;-webkit-background-clip:text!important;-webkit-text-fill-color:transparent!important}
+.hero{background:radial-gradient(600px 600px at 50% -10%,rgba(229,72,77,.28),transparent 70%),radial-gradient(500px 400px at 88% 8%,rgba(47,191,113,.16),transparent 70%)!important}
+.badge{background:rgba(229,72,77,.15)!important;border-color:rgba(229,72,77,.4)!important}
+.price-card.popular{border-color:var(--red)!important;box-shadow:0 0 40px rgba(229,72,77,.22)!important}
+.popular-badge{background:var(--red)!important}
+.price-card ul li::before{color:var(--green)!important}
+.key-input input:focus{border-color:var(--red)!important}
+#snow{position:fixed;inset:0;pointer-events:none;z-index:200}
+.garland{position:fixed;top:70px;left:0;right:0;height:30px;z-index:120;pointer-events:none;display:flex;justify-content:space-between;padding:0 6px;border-top:2px solid rgba(255,255,255,.12)}
+.garland i{width:9px;height:14px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;margin-top:3px;animation:tw 1.6s infinite}
+.garland i:nth-child(4n+1){background:#E5484D;box-shadow:0 0 12px #E5484D}
+.garland i:nth-child(4n+2){background:#2FBF71;box-shadow:0 0 12px #2FBF71}
+.garland i:nth-child(4n+3){background:#FFC857;box-shadow:0 0 12px #FFC857}
+.garland i:nth-child(4n){background:#4FC3FF;box-shadow:0 0 12px #4FC3FF}
+@keyframes tw{50%{opacity:.3}}
 </style>
 </head>
 <body>
+<canvas id="snow"></canvas>
+<div class="garland" id="garland"></div>
 <header>
  <div class="container">
   <nav>
@@ -77,7 +100,7 @@ footer{text-align:center;padding:40px;opacity:0.3;font-size:13px;border-top:1px 
 
 <section class="hero">
  <div class="container">
-  <div class="badge">✦ MINECRAFT 1.21.4 • FABRIC</div>
+  <div class="badge">🎄 НОВОГОДНЯЯ ТЕМА • MINECRAFT 1.21.4</div>
   <h1>ВИЗУАЛЫ ОТ КОТОРЫХ<br><span>НЕ ЛАГАЕТ ПК</span></h1>
   <p>EXTERNAL — визуальный мод со стеклянным HUD, клик-гуи, бинд-командами в чате и настройками для FPS.</p>
   <div class="hero-btns">
@@ -222,6 +245,26 @@ window.addEventListener('load', async () => {
     if(v.ok) showCabinet(k, v); else localStorage.removeItem('ext_key');
   }catch(e){}
 });
+
+/* ===== снег и гирлянда ===== */
+(function(){
+  var g = document.getElementById('garland');
+  for (var i = 0; i < 44; i++){ var b = document.createElement('i'); b.style.animationDelay = (i % 7) * 0.23 + 's'; g.appendChild(b); }
+  var c = document.getElementById('snow'), x = c.getContext('2d'), W, H, fl = [];
+  function size(){ W = c.width = innerWidth; H = c.height = innerHeight; }
+  size(); addEventListener('resize', size);
+  for (var i = 0; i < 110; i++) fl.push({x: Math.random(), y: Math.random(), r: 1 + Math.random() * 2.6, s: 0.25 + Math.random() * 0.9, p: Math.random() * 6.28});
+  function tick(t){
+    x.clearRect(0, 0, W, H); x.fillStyle = 'rgba(255,255,255,.85)';
+    for (var i = 0; i < fl.length; i++){
+      var f = fl[i]; f.y += f.s / 400; if (f.y > 1.02) { f.y = -0.02; f.x = Math.random(); }
+      var px = f.x * W + Math.sin(t / 1100 + f.p) * 14;
+      x.beginPath(); x.arc(px, f.y * H, f.r, 0, 6.283); x.fill();
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
 </script>
 </body>
 </html>
